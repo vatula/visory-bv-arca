@@ -1,4 +1,4 @@
-# Tasks: Evidence Gathering FSM (Revised)
+# Tasks: Evidence Gathering FSM
 
 - [ ] **Node Implementation (`CheckDriveNode`):** Use the Drive MCP to search for file names. If found, append to `evidence_documents` in the state object and route directly to `SynthesisGraph`.
 - [ ] **Node Implementation (`DispatchSlackNode`):** If Drive is missing evidence, query the Xero contact DB for the Slack handle. Dispatch a message via Slack MCP. Record the `slack_message_ts` in the `arcra_interrupts` table.

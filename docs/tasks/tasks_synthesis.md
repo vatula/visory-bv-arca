@@ -1,4 +1,4 @@
-# Tasks: Synthesis & Evaluation FSM (Revised)
+# Tasks: Synthesis & Evaluation FSM
 
 - [ ] **Node Implementation (`EvaluationNode`):** The node receives the fully populated `ArcraState` natively. Pass the transaction, policy context, and evidence URIs to `BedrockService`. Require a JSON output containing `confidence_score` and `reasoning`.
 - [ ] **Threshold Logic & Routing:** Compare `confidence_score` against `settings.CONFIDENCE_THRESHOLD`.
