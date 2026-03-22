@@ -34,3 +34,9 @@ Do not use REST polling for the active queues.
 
 * **Clarification on `tasks_telemetry.md`:** Ignore the directive to "emit an event to insert a row" manually at the end of every node. Stick strictly to the CQRS rule: Nodes are pure. They only call `logger.info(..., is_telemetry=True)`. The background task wrapper (defined in Override \#2) handles the DB insert.  
 * **Context Window Truncation:** When reading from `resources/policies/*.md`, do not pass the entire file to the LLM. You must use a deterministic Python string search (e.g., `if "travel" in transaction.description.lower(): load travel.md`) to route only the relevant policy file to the prompt context.
+
+## 6. Strict Task Tracking (Mandatory Behavioral Override)
+**You are failing to update the task checklists as you work. This is a fatal administrative error.**
+
+**Mandatory Stop:** After implementing ANY node, endpoint, or component, you MUST immediately open the corresponding `docs/tasks/tasks_*.md` file and change `[ ]` to `[x]`.
+ - **Verification:*** Do not proceed to the next implementation step or the next graph node until you have explicitly output the updated markdown for the task list.
