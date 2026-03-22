@@ -1,4 +1,4 @@
-# Tasks: Policy Verification FSM (Revised)
+# Tasks: Policy Verification FSM
 
 - [ ] **Node Implementation (`QueryNotionNode`):** The graph transitions here natively, carrying the full `ArcraState` in memory. Execute the semantic search against the Notion MCP server.
 - [ ] **Node Implementation (`ExtractRulesNode`):** Pass the raw Notion markdown to `BedrockService`. Extract constraints (e.g., "requires receipt") into a structured JSON array.

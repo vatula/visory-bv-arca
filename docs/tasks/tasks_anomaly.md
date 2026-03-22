@@ -1,4 +1,4 @@
-# Tasks: Anomaly Detection FSM (Revised)
+# Tasks: Anomaly Detection FSM
 
 - [ ] **Data Layer:** Refactor `src/infrastructure/db.py` to initialize the `arcra_checkpoints` and `arcra_interrupts` SQLite tables. Remove all Celery and Redis configurations.
 - [ ] **State Definition:** Define the unified `ArcraState` model (e.g., using `TypedDict` or `BaseModel`) that will flow through the entire graph. It must contain `transaction_data`, `policy_context`, `evidence_documents`, and `validation_confidence`.
