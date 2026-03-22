@@ -7,10 +7,13 @@ import { z } from "zod";
 export const TransactionStatusSchema = z.enum([
   "pending",
   "processing",
+  "suspended",
   "policy_check",
   "evidence_gathering",
   "awaiting_slack",
+  "evidence_found",
   "complete",
+  "resolved",
   "escalated",
 ]);
 
@@ -119,6 +122,12 @@ export function getStatusMeta(status: TransactionStatus): StatusMeta {
       return { label: "Awaiting Slack", colour: "text-orange-300", bgColour: "bg-orange-900/40" };
     case "complete":
       return { label: "Complete", colour: "text-green-300", bgColour: "bg-green-900/40" };
+    case "suspended":
+      return { label: "Suspended", colour: "text-yellow-300", bgColour: "bg-yellow-900/40" };
+    case "evidence_found":
+      return { label: "Evidence Found", colour: "text-teal-300", bgColour: "bg-teal-900/40" };
+    case "resolved":
+      return { label: "Resolved", colour: "text-green-300", bgColour: "bg-green-900/40" };
     case "escalated":
       return { label: "Escalated", colour: "text-red-300", bgColour: "bg-red-900/40" };
     default: {
