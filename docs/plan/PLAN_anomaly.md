@@ -1,7 +1,7 @@
 # Anomaly Detection FSM Plan
 
 ## Core Responsibility
-Ingest the transaction, perform the initial variance check via AWS Bedrock, and determine if the macro graph should proceed to deeper policy verification or terminate early.
+Ingest the transaction, perform the initial variance check via Pydantic AI's `BedrockModel`, and determine if the macro graph should proceed to deeper policy verification or terminate early.
 
 ## FSM Visualization
 
