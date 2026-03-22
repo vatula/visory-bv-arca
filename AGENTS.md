@@ -132,3 +132,42 @@ The decoupled frontend interface.
 ## Telemetry Implementation Note
 
 When executing Phase 1 (Telemetry), refer strictly to the structlog multiplexer defined in the plan. Graph nodes must utilize: `logger.info("event", is_telemetry=True, ...)`. The interceptor must catch this flag, write to the SQLite `arcra_audit_events` table, and strip the flag before passing the event to `stdout`.
+
+# General project tree structure
+
+Broadly follow the following structure, ensuring `backend` is separated from `frontend` folder 
+to avoid context blowout.
+
+```text
+<project_root>/
+├── docs/                        # (Existing) Plans, tasks, and skills
+├── resources/                   # (Existing) Local mock data, policies, invoices
+├── AGENTS.md                    # (Existing) The master ruleset
+├── pyproject.toml               # (Existing) Root Python definition (Optional: move to /backend)
+│
+├── backend/                     # -> PHASES 1, 2, 3, 4 (Python / FastAPI / Pydantic Graph)
+│   ├── pyproject.toml           # Strict Python dependency boundary
+│   ├── src/
+│   │   ├── api/                 # FastAPI routes, webhooks, and OpenAPI spec generation
+│   │   ├── core/                # structlog multiplexer, DB initialization, config
+│   │   ├── graph/               # The Pydantic Graph: state definitions, nodes, transitions
+│   │   └── services/            # Bedrock client, MCP client orchestration
+│   └── tests/                   # pytest suite
+│
+├── frontend/                    # -> PHASE 5 (TypeScript / Next.js / Tailwind)
+│   ├── package.json             # Strict UI dependency boundary
+│   ├── tsconfig.json            # strict: true
+│   ├── src/
+│   │   ├── app/                 # Next.js App Router (pages, layouts)
+│   │   ├── components/          # Reusable UI (AuditTimeline, StatusBadge)
+│   │   ├── lib/                 # pino logger setup, generated OpenAPI client
+│   │   └── types/               # Zod schemas, mapped types
+│   └── tests/                   # vitest UI suite
+│
+└── mcp_servers/                 # -> (Future/Parallel) Node.js MCP Service Mesh
+    ├── notion_mcp/              
+    │   ├── package.json
+    │   └── src/                 # Semantic search execution against local markdown
+    ├── drive_mcp/
+    └── slack_mcp/
+```
