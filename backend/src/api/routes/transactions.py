@@ -13,7 +13,15 @@ logger = structlog.get_logger(__name__)
 
 router = APIRouter(tags=["transactions"])
 
-_ACTIVE_STATUSES = ("pending", "processing", "suspended")
+_ACTIVE_STATUSES = (
+    "pending",
+    "processing",
+    "suspended",
+    "policy_check",
+    "evidence_gathering",
+    "awaiting_slack",
+    "evidence_found",
+)
 _PROCESSED_STATUSES = ("resolved", "escalated")
 
 
