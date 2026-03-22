@@ -18,3 +18,4 @@ tests_e2e/
 *.db
 *.sqlite
 *.sqlite3
+.aws/

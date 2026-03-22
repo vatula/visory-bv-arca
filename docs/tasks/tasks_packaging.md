@@ -17,3 +17,5 @@
   * Set the startup command to `node server.js` exposing port `3000`.  
 * [x] **Networking Verification:** Search the frontend codebase to ensure server-side API calls use `process.env.INTERNAL_API_URL` and client-side SSE/fetches use `process.env.NEXT_PUBLIC_API_URL`.
 * [x] **Orchestration:** Place the provided `docker-compose.yaml` in the root directory and ensure the relative paths (`./backend`, `./frontend`, `./resources`) resolve correctly.
+* [x] **Runtime Fix — Backend dev-dep re-sync:** Replace `CMD ["uv", "run", "uvicorn", ...]` with `CMD ["/app/.venv/bin/uvicorn", ...]` and add `uv cache clean` to the build step to prevent `uv run` from re-syncing dev dependencies (`ruff`, `mypy`) at every container startup.
+* [x] **Runtime Fix — Frontend missing `public/` directory:** Create `frontend/public/.gitkeep` so the builder stage always has a `public/` directory to copy. Add `RUN mkdir -p ./public` in the runner stage before the `COPY` as a defensive guard against empty-directory COPY failures.
