@@ -222,3 +222,5 @@ __marimo__/
 /frontend/.next/
 
 tsconfig.tsbuildinfo
+
+.aws/
