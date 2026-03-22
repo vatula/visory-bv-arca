@@ -1,0 +1,50 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: arcra_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Named volume for SQLite WAL — never bake the DB into the image
+      - arcra_db_data:/app/data
+      # Read-only fixture mount — xero_api_feed.json and policies
+      - ./resources:/app/resources:ro
+      # Read-only AWS credentials for Bedrock — injected from host, never copied into image
+      - ./.aws:/root/.aws:ro
+    environment:
+      DATABASE_URL: /app/data/arcra.db
+      RESOURCES_PATH: /app/resources
+    restart: unless-stopped
+    networks:
+      - arcra_internal
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: arcra_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      # Read-only fixture mount (frontend may serve static references)
+      - ./resources:/app/resources:ro
+    environment:
+      # Used by Next.js server-side (BFF rewrite) to reach backend within Docker bridge
+      INTERNAL_API_URL: http://backend:8000
+      # Used by the browser (client-side EventSource / SSE) — must be host-accessible
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - arcra_internal
+
+volumes:
+  arcra_db_data:
+    driver: local
+
+networks:
+  arcra_internal:
+    driver: bridge
