@@ -40,3 +40,10 @@ Do not use REST polling for the active queues.
 
 **Mandatory Stop:** After implementing ANY node, endpoint, or component, you MUST immediately open the corresponding `docs/tasks/tasks_*.md` file and change `[ ]` to `[x]`.
  - **Verification:*** Do not proceed to the next implementation step or the next graph node until you have explicitly output the updated markdown for the task list.
+
+## 7. E2E Prompt Evaluation & LLM Testing
+
+To ensure the `BedrockConverseModel` nodes correctly extract entities without hallucinating, you must build end-to-end tests for the prompts.
+* **Fixture-Driven E2E Tests:** Do not mock the LLM for prompt evaluation tests. Use `ytest-asyncio` to write tests that pass real data from `resources/xero_api_feed.json` and  `resources/policies/*.md` directly into the Pydantic AI `Agent`.
+* **Validation Focus:** Assert that the structured JSON returned via Pydantic's `result_type` matches the expected schema and accurately extracts the target entities (e.g., extracting "Airbnb" as a non-standard provider).
+* **Iterative Prompt Tuning:** If the e2e test fails (e.g., the model fails to extract a project code), do not change the Python logic first. Adjust the Agent's system prompt instructions and re-run the `pytest` suite until the extraction is reliable.
