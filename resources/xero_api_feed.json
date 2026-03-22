@@ -1,0 +1,484 @@
+[
+  {
+    "bank_account_id": "acc_2001",
+    "feed_date": "2026-03-19",
+    "transactions": [
+      {
+        "transaction_id": "tx_998877",
+        "date": "2026-03-18",
+        "description": "ACH DEBIT: AWS SERVICES",
+        "amount": -150.50,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_998878",
+        "date": "2026-03-18",
+        "description": "STRIPE TRANSFER",
+        "amount": 2500.00,
+        "currency": "AUD",
+        "type": "credit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_1001",
+    "feed_date": "2026-03-18",
+    "transactions": [
+      {
+        "transaction_id": "tx_100001",
+        "date": "2026-03-17",
+        "description": "AWS EMEA",
+        "amount": -450.25,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100002",
+        "date": "2026-03-17",
+        "description": "STRIPE PAYMENTS",
+        "amount": 4200.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100003",
+        "date": "2026-03-17",
+        "description": "DATADOG INC",
+        "amount": -120.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100004",
+        "date": "2026-03-17",
+        "description": "GITHUB",
+        "amount": -45.00,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_2001",
+    "feed_date": "2026-03-17",
+    "transactions": [
+      {
+        "transaction_id": "tx_100005",
+        "date": "2026-03-16",
+        "description": "TELSTRA BILLING",
+        "amount": -210.50,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100006",
+        "date": "2026-03-16",
+        "description": "INVOICE INV-0042",
+        "amount": 1500.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100007",
+        "date": "2026-03-16",
+        "description": "OFFICEWORKS MELB",
+        "amount": -34.95,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100008",
+        "date": "2026-03-16",
+        "description": "GOOGLE CLOUD",
+        "amount": -890.10,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100009",
+        "date": "2026-03-16",
+        "description": "SLACK TECHNOLOGIES",
+        "amount": -85.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100010",
+        "date": "2026-03-16",
+        "description": "STRIPE PAYMENTS",
+        "amount": 3100.50,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100011",
+        "date": "2026-03-16",
+        "description": "UBER EATS",
+        "amount": -65.20,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_1001",
+    "feed_date": "2026-03-16",
+    "transactions": [
+      {
+        "transaction_id": "tx_100012",
+        "date": "2026-03-15",
+        "description": "MONTHLY ACCOUNT FEE",
+        "amount": -10.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100013",
+        "date": "2026-03-15",
+        "description": "INTEREST PAID",
+        "amount": 45.30,
+        "currency": "AUD",
+        "type": "credit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_3001",
+    "feed_date": "2026-03-15",
+    "transactions": [
+      {
+        "transaction_id": "tx_100014",
+        "date": "2026-03-14",
+        "description": "STRIPE PAYMENTS",
+        "amount": 4850.00,
+        "currency": "AUD",
+        "type": "credit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_1001",
+    "feed_date": "2026-03-14",
+    "transactions": [
+      {
+        "transaction_id": "tx_100015",
+        "date": "2026-03-13",
+        "description": "JETBRAINS SRO",
+        "amount": -149.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100016",
+        "date": "2026-03-13",
+        "description": "INVOICE INV-0043",
+        "amount": 2200.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100017",
+        "date": "2026-03-13",
+        "description": "BUNNINGS WAREHOUSE",
+        "amount": -125.40,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100018",
+        "date": "2026-03-13",
+        "description": "COLES SUPERMARKET",
+        "amount": -89.50,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100019",
+        "date": "2026-03-13",
+        "description": "ADOBE SYSTEMS",
+        "amount": -79.99,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100020",
+        "date": "2026-03-13",
+        "description": "MAILCHIMP",
+        "amount": -110.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100021",
+        "date": "2026-03-13",
+        "description": "ZENDESK",
+        "amount": -250.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100022",
+        "date": "2026-03-13",
+        "description": "STRIPE PAYMENTS",
+        "amount": 1850.75,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100023",
+        "date": "2026-03-13",
+        "description": "POST OFFICE EXPRESS",
+        "amount": -22.50,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100024",
+        "date": "2026-03-13",
+        "description": "LINKEDIN PREMIUM",
+        "amount": -99.00,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_2001",
+    "feed_date": "2026-03-13",
+    "transactions": [
+      {
+        "transaction_id": "tx_100025",
+        "date": "2026-03-12",
+        "description": "ATO PAYG INSTALMENT",
+        "amount": -3500.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100026",
+        "date": "2026-03-12",
+        "description": "XERO SUBSCRIPTION",
+        "amount": -65.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100027",
+        "date": "2026-03-12",
+        "description": "INVOICE INV-0044",
+        "amount": 950.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100028",
+        "date": "2026-03-12",
+        "description": "UBER TRIP",
+        "amount": -42.80,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100029",
+        "date": "2026-03-12",
+        "description": "CITY OF MELB PARKING",
+        "amount": -15.50,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_3001",
+    "feed_date": "2026-03-12",
+    "transactions": [
+      {
+        "transaction_id": "tx_100030",
+        "date": "2026-03-11",
+        "description": "STRIPE PAYMENTS",
+        "amount": 2750.25,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100031",
+        "date": "2026-03-11",
+        "description": "NOTION LABS",
+        "amount": -25.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100032",
+        "date": "2026-03-11",
+        "description": "DROPBOX",
+        "amount": -18.99,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_3001",
+    "feed_date": "2026-03-11",
+    "transactions": [
+      {
+        "transaction_id": "tx_100033",
+        "date": "2026-03-10",
+        "description": "INVOICE INV-0045",
+        "amount": 5000.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100034",
+        "date": "2026-03-10",
+        "description": "WEWORK MGMT",
+        "amount": -850.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100035",
+        "date": "2026-03-10",
+        "description": "VULTR HOLDINGS",
+        "amount": -115.50,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100036",
+        "date": "2026-03-10",
+        "description": "TWILIO",
+        "amount": -45.60,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100037",
+        "date": "2026-03-10",
+        "description": "ATLASSIAN",
+        "amount": -135.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100038",
+        "date": "2026-03-10",
+        "description": "ZOOM VIDEO",
+        "amount": -22.99,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100039",
+        "date": "2026-03-10",
+        "description": "DOMAIN REGISTRATION",
+        "amount": -15.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100040",
+        "date": "2026-03-10",
+        "description": "CANVA PRO",
+        "amount": -19.99,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_1001",
+    "feed_date": "2026-03-10",
+    "transactions": [
+      {
+        "transaction_id": "tx_100041",
+        "date": "2026-03-09",
+        "description": "STRIPE PAYMENTS",
+        "amount": 1250.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100042",
+        "date": "2026-03-09",
+        "description": "QANTAS AIRWAYS",
+        "amount": -450.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100043",
+        "date": "2026-03-09",
+        "description": "AIRBNB",
+        "amount": -680.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100044",
+        "date": "2026-03-09",
+        "description": "CABCHARGE",
+        "amount": -55.20,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100045",
+        "date": "2026-03-09",
+        "description": "CAFE SYDNEY",
+        "amount": -120.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100046",
+        "date": "2026-03-09",
+        "description": "INVOICE INV-0046",
+        "amount": 800.00,
+        "currency": "AUD",
+        "type": "credit"
+      }
+    ]
+  },
+  {
+    "bank_account_id": "acc_4001",
+    "feed_date": "2026-03-09",
+    "transactions": [
+      {
+        "transaction_id": "tx_100047",
+        "date": "2026-03-08",
+        "description": "STRIPE PAYMENTS",
+        "amount": 3400.00,
+        "currency": "AUD",
+        "type": "credit"
+      },
+      {
+        "transaction_id": "tx_100048",
+        "date": "2026-03-08",
+        "description": "APPLE STORE",
+        "amount": -2499.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100049",
+        "date": "2026-03-08",
+        "description": "JB HI FI",
+        "amount": -150.00,
+        "currency": "AUD",
+        "type": "debit"
+      },
+      {
+        "transaction_id": "tx_100050",
+        "date": "2026-03-08",
+        "description": "FEDEX SHIPPING",
+        "amount": -45.80,
+        "currency": "AUD",
+        "type": "debit"
+      }
+    ]
+  }
+]
