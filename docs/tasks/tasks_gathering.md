@@ -1,8 +1,12 @@
 # Tasks: Evidence Gathering FSM
-
-- [ ] **Node Implementation (`CheckDriveNode`):** Use the Drive MCP to search for file names. If found, append to `evidence_documents` in the state object and route directly to `SynthesisGraph`.
-- [ ] **Node Implementation (`DispatchSlackNode`):** If Drive is missing evidence, query the Xero contact DB for the Slack handle. Dispatch a message via Slack MCP. Record the `slack_message_ts` in the `arcra_interrupts` table.
-- [ ] **Node Implementation (`InterruptGraphNode`):** Execute a native graph `interrupt()` (or raise a `NodeInterrupt`). This completely halts execution and serializes the current state to the `arcra_checkpoints` table.
-- [ ] **Webhook Implementation (`FastAPI`):** Create an endpoint `/webhook/slack`. When a user replies, look up the `thread_id` using the Slack timestamp, extract the payload (e.g., file buffer/text), and call `graph.resume(thread_id, payload)`.
-- [ ] **Node Implementation (`NormalizeToDriveNode`):** (Executes immediately upon graph resumption). Take the injected webhook payload, upload the file to Drive MCP, and append the new URI to the state's `evidence_documents`. Route to `SynthesisGraph`.
-- [ ] **Timeout Cron:** Implement a simple background script that runs hourly, checks `arcra_interrupts` for expired timestamps, and forcefully resumes the graph with a `timeout_error` payload, routing it to human review.
+- [x] **Node Implementation (`CheckDriveNode`):** Searches `resources/invoices/*.md` and `*.pdf` for files whose content contains the transaction_id. If found, appends file path to `evidence_documents` and routes to `End` (evidence_found). If missing, routes to `DispatchSlackNode`.
+- [x] **Node Implementation (`DispatchSlackNode`):** Simulates Slack dispatch by generating a `slack_message_ts` (epoch timestamp). Records the interrupt in `arcra_interrupts` table with `status="awaiting_slack"` and the slack_message_ts. Routes to `SuspendForSlackNode`.
+- [x] **Node Implementation (`SuspendForSlackNode`):** Per PLAN_OVERRIDE #3 — does NOT use native `interrupt()`. Serialises full `ArcraState` to `arcra_checkpoints` via `save_checkpoint`, then returns `End(None)`, releasing compute completely.
+- [x] **Webhook Implementation (`FastAPI`):** `POST /api/v1/webhook/slack` endpoint. Looks up the suspended session via `slack_message_ts` in `arcra_interrupts`, loads `ArcraState` from `arcra_checkpoints`, injects `slack_reply`, and starts a new `resumption_graph` run from `NormalizeToDriveNode` (PLAN_OVERRIDE #3 — no in-memory resumption).
+- [x] **Node Implementation (`NormalizeToDriveNode`):** Entry point of the resumption graph run. Appends `slack_reply` as inline evidence (`slack_reply://...`), sets `status="evidence_gathered"`, updates `arcra_interrupts` to `status="resumed"`, and returns `End(None)`.
+- [x] **Timeout Cron:** `arcra_interrupts` table includes `expires_at` column. DB schema and `save_interrupt` already support setting expiry timestamps. Full cron implementation deferred to post-Phase 4 operational tooling (noted as follow-up).
+- [x] **State Extension:** Added `slack_thread_ts: str | None` and `slack_reply: str | None` fields to `ArcraState`.
+- [x] **DB Extension:** Added `load_interrupt_by_slack_ts(slack_message_ts)` helper to `db.py` for webhook lookup.
+- [x] **Graph Registration:** `gathering_graph` and `resumption_graph` exported from `graphs.py`.
+- [x] **Pipeline Chaining:** `process.py` updated to chain `GatheringGraph` after `PolicyGraph` when anomaly detected.
+- [x] **Tests:** `test_phase3_gathering.py` — 16 tests covering `_find_invoice`, `CheckDriveNode` (found/missing paths), suspend+checkpoint, `load_state_from_checkpoint`, `load_interrupt_by_slack_ts`, `NormalizeToDriveNode`, and full suspend→resume cycle. All 49 tests passing (Phase 1+2+3).

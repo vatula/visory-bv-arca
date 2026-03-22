@@ -249,6 +249,28 @@ async def save_interrupt(
     logger.info("interrupt_saved", thread_id=thread_id, status=status)
 
 
+async def load_interrupt_by_slack_ts(slack_message_ts: str) -> dict[str, object] | None:
+    """Load the interrupt record matching a Slack message timestamp."""
+    async with get_connection() as conn:
+        cursor = await conn.execute(
+            """
+            SELECT thread_id, status, slack_message_ts, expires_at
+            FROM arcra_interrupts
+            WHERE slack_message_ts = ?
+            """,
+            (slack_message_ts,),
+        )
+        row = await cursor.fetchone()
+    if row is None:
+        return None
+    return {
+        "thread_id": row["thread_id"],
+        "status": row["status"],
+        "slack_message_ts": row["slack_message_ts"],
+        "expires_at": row["expires_at"],
+    }
+
+
 async def load_interrupt(thread_id: str) -> dict[str, object] | None:
     """Load the interrupt record for a given thread_id."""
     async with get_connection() as conn:
