@@ -83,16 +83,24 @@ Before the graph can run, the telemetry and state checkpointer must exist.
  - **Bound Plan:** `docs/plan/PLAN_telemetry.md`
  - **Bound Tasks:** `docs/tasks/tasks_telemetry.md`
  - **Required Skills Profile:** `docs/skills/skills_telemetry.md`
- - **Focus:** Implement the dual-stream multiplexer. Ensure the SQLite schema is initialized for both native graph checkpointing (`arcra_checkpoints`) and the UI Read Model (`arcra_ui_read_model`).
+ - **Focus & Resources:** Implement the dual-stream multiplexer. Ensure the SQLite schema is initialized for both native graph checkpointing (`arcra_checkpoints`) and the UI Read Model (`arcra_ui_read_model`).
 
 ### Phase 2: Ingestion & Policy Extraction
 
 The initial automated pathway.
 
- - **Bound Plans:** `docs/plan/PLAN_anomaly.md`, `docs/plan/PLAN_policy.md`
- - **Bound Tasks:** `docs/tasks/tasks_anomaly.md`, `docs/tasks/tasks_policy.md`
- - **Required Skills Profile:** `docs/skills/skills_anomaly.md`, `docs/skills/skills_policy.md`
- - **Focus & Resources:** Build the initial DAG nodes and hydrate the `ArcraState`. For local testing, ingest `resources/xero_api_feed.json`. For the Notion MCP simulation, read directly from `resources/policies/*.md`.
+**Processing policies**
+ - **Bound Plans:** `docs/plan/PLAN_policy.md`
+ - **Bound Tasks:** `docs/tasks/tasks_policy.md`
+ - **Required Skills Profile:** `docs/skills/skills_policy.md`
+ 
+**Processing anomalies**
+ - **Bound Plans:** `docs/plan/PLAN_anomaly.md`
+ - **Bound Tasks:** `docs/tasks/tasks_anomaly.md`
+ - **Required Skills Profile:** `docs/skills/skills_anomaly.md`
+ 
+**Focus & Resources:** Build the initial DAG nodes and hydrate the `ArcraState`. For local testing, ingest `resources/xero_api_feed.json`. For the Notion MCP simulation, read directly from `resources/policies/*.md`.
+
 
 ### Phase 3: Stateful Interruption (High Complexity)
 
