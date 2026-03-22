@@ -92,6 +92,8 @@ class ArcraState(BaseModel):
     policy_file_path: str | None = None
     policy_context: list[PolicyRule] = Field(default_factory=list)
     evidence_documents: list[str] = Field(default_factory=list)
+    slack_thread_ts: str | None = None
+    slack_reply: str | None = None
     validation_confidence: float = 0.0
     status: str = "pending"
     error_message: str | None = None
