@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.core.config import get_settings
 from src.core.db import init_db
 from src.core.logging import configure_logging
+from src.api.routes.process import router as process_router
 from src.api.routes.transactions import router as transactions_router
 
 
@@ -38,6 +39,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(transactions_router, prefix="/api/v1")
+    app.include_router(process_router, prefix="/api/v1")
 
     return app
 
