@@ -1,19 +1,19 @@
 # Tasks: Docker Containerization
 
-* [ ] **Backend Prep (`backend/.dockerignore`):** Create an ignore file preventing `__pycache__`, `.pytest_cache`, `.env`, virtual environments, and `tests/` from being copied into the container context.  
-* [ ] **Backend Dockerfile (`backend/Dockerfile`):**  
+* [x] **Backend Prep (`backend/.dockerignore`):** Create an ignore file preventing `__pycache__`, `.pytest_cache`, `.env`, virtual environments, and `tests/` from being copied into the container context.
+* [x] **Backend Dockerfile (`backend/Dockerfile`):**
   * Use python:3.12-slim (or similar).  
   * Set `WORKDIR /app`.  
   * Install dependencies (via `uv`).  
   * Explicitly create the database directory: `RUN mkdir -p /app/data`.  
   * Copy the `src` code.  
   * Set the startup command to launch FastAPI via `uvicorn` on `0.0.0.0:8000`.  
-* [ ] **Frontend Prep (`frontend/.dockerignore`):** Create an ignore file preventing `node_modules/`, `.next/`, and local `.env` files from being copied.  
-* [ ] **Frontend Config (`frontend/next.config.ts`):** Modify the Next.js configuration file to include `output: 'standalone'`.  
-* [ ] **Frontend Dockerfile (`frontend/Dockerfile`):**  
+* [x] **Frontend Prep (`frontend/.dockerignore`):** Create an ignore file preventing `node_modules/`, `.next/`, and local `.env` files from being copied.
+* [x] **Frontend Config (`frontend/next.config.ts`):** Modify the Next.js configuration file to include `output: 'standalone'`.
+* [x] **Frontend Dockerfile (`frontend/Dockerfile`):**
   * Implement a multi-stage build (deps, builder, runner) using `node:18-alpine` (or newer).  
   * In the builder stage, run the Next.js build.  
   * In the runner stage, copy the `.next/standalone` directory and `.next/static` assets.  
   * Set the startup command to `node server.js` exposing port `3000`.  
-* [ ] **Networking Verification:** Search the frontend codebase to ensure server-side API calls use `process.env.INTERNAL_API_URL` and client-side SSE/fetches use `process.env.NEXT_PUBLIC_API_URL`.  
-* [ ] **Orchestration:** Place the provided `docker-compose.yaml` in the root directory and ensure the relative paths (`./backend`, `./frontend`, `./resources`) resolve correctly.
+* [x] **Networking Verification:** Search the frontend codebase to ensure server-side API calls use `process.env.INTERNAL_API_URL` and client-side SSE/fetches use `process.env.NEXT_PUBLIC_API_URL`.
+* [x] **Orchestration:** Place the provided `docker-compose.yaml` in the root directory and ensure the relative paths (`./backend`, `./frontend`, `./resources`) resolve correctly.

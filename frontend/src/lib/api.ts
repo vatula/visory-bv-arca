@@ -11,8 +11,15 @@ import { getComponentLogger } from "@/lib/logger";
 
 const log = getComponentLogger("api");
 
-const BACKEND_BASE =
-  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+// Server-side BFF fetches go through the Next.js rewrite (next.config.ts), which
+// forwards /api/* to INTERNAL_API_URL inside the Docker bridge network. Using a
+// relative base means both browser and SSR paths hit the Next.js proxy correctly.
+const BFF_BASE = "";
+
+// The SSE stream is consumed directly by the browser via EventSource. It must
+// bypass the Next.js proxy and connect to the backend port exposed on the host.
+const SSE_BASE =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 // ---------------------------------------------------------------------------
 // Internal helper — fetch + Zod parse with structured error logging
@@ -59,14 +66,14 @@ async function fetchAndParse<T>(
 
 export async function fetchActiveTransactions(): Promise<ActiveTransactionsResponse> {
   return fetchAndParse(
-    `${BACKEND_BASE}/api/v1/transactions/active`,
+    `${BFF_BASE}/api/v1/transactions/active`,
     ActiveTransactionsResponseSchema,
   );
 }
 
 export async function fetchProcessedTransactions(): Promise<ProcessedTransactionsResponse> {
   return fetchAndParse(
-    `${BACKEND_BASE}/api/v1/transactions/processed`,
+    `${BFF_BASE}/api/v1/transactions/processed`,
     ProcessedTransactionsResponseSchema,
   );
 }
@@ -75,7 +82,7 @@ export async function fetchTransactionAudit(
   id: string,
 ): Promise<TransactionAuditResponse> {
   return fetchAndParse(
-    `${BACKEND_BASE}/api/v1/transactions/${encodeURIComponent(id)}/audit`,
+    `${BFF_BASE}/api/v1/transactions/${encodeURIComponent(id)}/audit`,
     TransactionAuditResponseSchema,
   );
 }
@@ -85,5 +92,5 @@ export async function fetchTransactionAudit(
 // ---------------------------------------------------------------------------
 
 export function getSseStreamUrl(): string {
-  return `${BACKEND_BASE}/api/v1/stream`;
+  return `${SSE_BASE}/api/v1/stream`;
 }
