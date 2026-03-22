@@ -7,7 +7,7 @@ The system consists of a single, unified asynchronous graph execution environmen
 * **Engine:** Pydantic Graph (or equivalent DAG orchestrator) with Native Checkpointing.
 * **State Persistence:** SQLite operates as the explicit graph checkpointer.
 * **Goal:** Execute the full lifecycle—Anomaly Detection, Policy Verification, Evidence Gathering (with native human-in-the-loop interrupts), and Synthesis.
-* **Generative Engine:** Pydantic AI with the AWS Bedrock `amazon.nova-lite-v1:0` models.
+* **Generative Engine:** Pydantic AI `BedrockModel` using the `amazon.nova-lite-v1:0` model.
 
 ## 2. Infrastructure & Data Contracts
 ### 2.1 Graph Checkpointing (SQLite)
