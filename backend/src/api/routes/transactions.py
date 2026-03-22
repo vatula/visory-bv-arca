@@ -13,13 +13,29 @@ logger = structlog.get_logger(__name__)
 
 router = APIRouter(tags=["transactions"])
 
-_ACTIVE_STATUSES = ("pending", "processing", "suspended")
+_ACTIVE_STATUSES = (
+    "pending",
+    "processing",
+    "suspended",
+    "policy_check",
+    "evidence_gathering",
+    "awaiting_slack",
+    "evidence_found",
+)
 _PROCESSED_STATUSES = ("resolved", "escalated")
 
 
 # ---------------------------------------------------------------------------
 # Response models
 # ---------------------------------------------------------------------------
+
+
+class ActiveTransactionsResponse(BaseModel):
+    active: list["TransactionSummary"]
+
+
+class ProcessedTransactionsResponse(BaseModel):
+    processed: list["TransactionSummary"]
 
 
 class TransactionSummary(BaseModel):
@@ -87,8 +103,8 @@ def _row_to_audit_event(row: object) -> AuditEvent:
 # ---------------------------------------------------------------------------
 
 
-@router.get("/transactions/active", response_model=list[TransactionSummary])
-async def get_active_transactions() -> list[TransactionSummary]:
+@router.get("/transactions/active", response_model=ActiveTransactionsResponse)
+async def get_active_transactions() -> ActiveTransactionsResponse:
     """Return up to 10 transactions in a non-terminal state, newest first."""
     placeholders = ",".join("?" * len(_ACTIVE_STATUSES))
     async with get_connection() as conn:
@@ -99,11 +115,11 @@ async def get_active_transactions() -> list[TransactionSummary]:
         )
         rows = list(await cursor.fetchall())
     logger.info("active_transactions_queried", count=len(rows))
-    return [_row_to_summary(r) for r in rows]
+    return ActiveTransactionsResponse(active=[_row_to_summary(r) for r in rows])
 
 
-@router.get("/transactions/processed", response_model=list[TransactionSummary])
-async def get_processed_transactions() -> list[TransactionSummary]:
+@router.get("/transactions/processed", response_model=ProcessedTransactionsResponse)
+async def get_processed_transactions() -> ProcessedTransactionsResponse:
     """Return up to 10 transactions in a terminal state, newest first."""
     placeholders = ",".join("?" * len(_PROCESSED_STATUSES))
     async with get_connection() as conn:
@@ -114,7 +130,7 @@ async def get_processed_transactions() -> list[TransactionSummary]:
         )
         rows = list(await cursor.fetchall())
     logger.info("processed_transactions_queried", count=len(rows))
-    return [_row_to_summary(r) for r in rows]
+    return ProcessedTransactionsResponse(processed=[_row_to_summary(r) for r in rows])
 
 
 @router.get("/transactions/{transaction_id}/audit", response_model=TransactionAuditResponse)

@@ -7,10 +7,13 @@ import { z } from "zod";
 export const TransactionStatusSchema = z.enum([
   "pending",
   "processing",
+  "suspended",
   "policy_check",
   "evidence_gathering",
   "awaiting_slack",
+  "evidence_found",
   "complete",
+  "resolved",
   "escalated",
 ]);
 
@@ -72,6 +75,29 @@ export type ProcessedTransactionsResponse = z.infer<
 >;
 
 // ---------------------------------------------------------------------------
+// Queue schemas
+// ---------------------------------------------------------------------------
+
+export const QueuedTransactionSchema = z.object({
+  transaction_id: z.string(),
+  date: z.string(),
+  description: z.string(),
+  amount: z.number(),
+  currency: z.string(),
+  type: z.string(),
+  bank_account_id: z.string().nullable().optional(),
+});
+
+export type QueuedTransaction = z.infer<typeof QueuedTransactionSchema>;
+
+export const QueueResponseSchema = z.object({
+  queue: z.array(QueuedTransactionSchema),
+  total_remaining: z.number(),
+});
+
+export type QueueResponse = z.infer<typeof QueueResponseSchema>;
+
+// ---------------------------------------------------------------------------
 // SSE event payload
 // ---------------------------------------------------------------------------
 
@@ -93,6 +119,8 @@ export type DashboardState =
       readonly kind: "ready";
       readonly active: readonly TransactionSummary[];
       readonly processed: readonly TransactionSummary[];
+      readonly queue: readonly QueuedTransaction[];
+      readonly totalRemaining: number;
     };
 
 // ---------------------------------------------------------------------------
@@ -119,6 +147,12 @@ export function getStatusMeta(status: TransactionStatus): StatusMeta {
       return { label: "Awaiting Slack", colour: "text-orange-300", bgColour: "bg-orange-900/40" };
     case "complete":
       return { label: "Complete", colour: "text-green-300", bgColour: "bg-green-900/40" };
+    case "suspended":
+      return { label: "Suspended", colour: "text-yellow-300", bgColour: "bg-yellow-900/40" };
+    case "evidence_found":
+      return { label: "Evidence Found", colour: "text-teal-300", bgColour: "bg-teal-900/40" };
+    case "resolved":
+      return { label: "Resolved", colour: "text-green-300", bgColour: "bg-green-900/40" };
     case "escalated":
       return { label: "Escalated", colour: "text-red-300", bgColour: "bg-red-900/40" };
     default: {
