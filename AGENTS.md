@@ -129,6 +129,16 @@ The decoupled frontend interface.
  - **Required Skills Profile:** `docs/skills/skills_frontend.md`
  - **Focus & Resources:** Consume the FastAPI OpenAPI spec. Build the UI that reads from the `arcra_ui_read_model` and `arcra_audit_events` to visually display the agent's reasoning trace and interrupted states.
 
+### Phase 6: MLOps and Containerisation 
+
+The packaging of the application into an isolated, production-parity local environment.
+
+ - **Bound Plans:** `docs/plan/PLAN_packaging.md`
+ - **Bound Tasks:** `docs/tasks/tasks_packaging.md`
+ - **Required Skills Profile:** `docs/skills/skills_packaging.md`
+ - **Focus & Resources:** Build lean Docker images (Python slim base and Next.js `standalone`). Configure `docker-compose.yaml` to orchestrate the containers, enforcing strict SQLite WAL volume isolation (`arcra_db_data`), read-only host mounts for fixtures/AWS credentials, and critical dual-network routing (`INTERNAL_API_URL` vs. `NEXT_PUBLIC_API_URL`).
+
+
 ## Telemetry Implementation Note
 
 When executing Phase 1 (Telemetry), refer strictly to the structlog multiplexer defined in the plan. Graph nodes must utilize: `logger.info("event", is_telemetry=True, ...)`. The interceptor must catch this flag, write to the SQLite `arcra_audit_events` table, and strip the flag before passing the event to `stdout`.
