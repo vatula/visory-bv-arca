@@ -10,6 +10,13 @@ from src.graph.gathering import (
     SuspendForSlackNode,
 )
 from src.graph.policy import EscalateNode, ExtractRulesNode, QueryNotionNode
+from src.graph.synthesis import (
+    DraftGenerationNode,
+    EscalateToHumanReviewNode,
+    EvaluateConfidenceNode,
+    MarkCompleteNode,
+    MergeContextNode,
+)
 from src.graph.state import ArcraState
 from src.services.bedrock import ArcraDeps
 
@@ -33,4 +40,16 @@ gathering_graph: Graph[ArcraState, ArcraDeps, None] = Graph(
 resumption_graph: Graph[ArcraState, ArcraDeps, None] = Graph(
     nodes=[NormalizeToDriveNode],
     name="ResumptionGraph",
+)
+
+# Synthesis graph: merge context → confidence evaluation → draft or escalate
+synthesis_graph: Graph[ArcraState, ArcraDeps, None] = Graph(
+    nodes=[
+        MergeContextNode,
+        EvaluateConfidenceNode,
+        DraftGenerationNode,
+        EscalateToHumanReviewNode,
+        MarkCompleteNode,
+    ],
+    name="SynthesisGraph",
 )

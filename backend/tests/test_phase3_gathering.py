@@ -34,7 +34,15 @@ from src.graph.gathering import (
 )
 import src.core.config as _config_module
 from src.graph.graphs import gathering_graph, resumption_graph
-from src.graph.state import AnomalyVaguenessResult, ArcraState, PolicyRuleContainer, XeroTransaction
+from pydantic_ai import Agent
+from pydantic_ai.models.test import TestModel
+from src.graph.state import (
+    AnomalyVaguenessResult,
+    ArcraState,
+    PolicyRuleContainer,
+    SynthesisEvaluation,
+    XeroTransaction,
+)
 from src.services.bedrock import ArcraDeps
 
 # ---------------------------------------------------------------------------
@@ -104,6 +112,8 @@ def _make_deps() -> ArcraDeps:
         resources_path=_RESOURCES_PATH,
         vagueness_agent=_mock_agent(AnomalyVaguenessResult(is_vague=False, missing_context="")),
         policy_extraction_agent=_mock_agent(PolicyRuleContainer(rules=[])),
+        synthesis_agent=Agent(TestModel(), output_type=SynthesisEvaluation),
+        confidence_threshold=0.75,
     )
 
 

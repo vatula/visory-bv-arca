@@ -10,8 +10,9 @@ from src.core.config import get_settings
 from src.core.db import upsert_ui_read_model
 from src.graph.anomaly import ExtractLedgerVarianceNode
 from src.graph.gathering import CheckDriveNode
-from src.graph.graphs import anomaly_graph, gathering_graph, policy_graph
+from src.graph.graphs import anomaly_graph, gathering_graph, policy_graph, synthesis_graph
 from src.graph.policy import QueryNotionNode
+from src.graph.synthesis import MergeContextNode
 from src.graph.state import ArcraState, XeroTransaction
 from src.services.bedrock import build_deps_from_settings
 
@@ -46,6 +47,8 @@ class ProcessResponse(BaseModel):
     policy_rules_count: int
     evidence_count: int
     awaiting_slack: bool
+    confidence_score: float | None = None
+    xero_draft_id: str | None = None
 
 
 @router.post(
@@ -98,6 +101,13 @@ async def process_transaction(req: ProcessRequest) -> ProcessResponse:
             )
             state = gathering_result.state
 
+            # Phase 4: Synthesis — only when not suspended waiting for Slack
+            if state.status != "awaiting_slack":
+                synthesis_result = await synthesis_graph.run(
+                    MergeContextNode(), state=state, deps=deps
+                )
+                state = synthesis_result.state
+
     except Exception as exc:
         logger.error(
             "process_transaction_failed",
@@ -115,6 +125,16 @@ async def process_transaction(req: ProcessRequest) -> ProcessResponse:
         status=state.status,
         amount=abs(tx.amount),
         merchant=tx.description,
+        confidence_score=(
+            state.synthesis_evaluation.confidence_score
+            if state.synthesis_evaluation
+            else None
+        ),
+        synthesis_reasoning=(
+            state.synthesis_evaluation.reasoning
+            if state.synthesis_evaluation
+            else None
+        ),
     )
 
     logger.info(
@@ -135,4 +155,10 @@ async def process_transaction(req: ProcessRequest) -> ProcessResponse:
         policy_rules_count=len(state.policy_context),
         evidence_count=len(state.evidence_documents),
         awaiting_slack=state.status == "awaiting_slack",
+        confidence_score=(
+            state.synthesis_evaluation.confidence_score
+            if state.synthesis_evaluation
+            else None
+        ),
+        xero_draft_id=state.xero_draft.draft_id if state.xero_draft else None,
     )

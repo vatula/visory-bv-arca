@@ -11,8 +11,9 @@ import json
 import os
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
-
 import pytest
+from pydantic_ai import Agent
+from pydantic_ai.models.test import TestModel
 
 from src.graph.anomaly import ExtractLedgerVarianceNode
 from src.graph.graphs import anomaly_graph, policy_graph
@@ -22,6 +23,7 @@ from src.graph.state import (
     ArcraState,
     PolicyRule,
     PolicyRuleContainer,
+    SynthesisEvaluation,
     XeroTransaction,
 )
 from src.services.bedrock import ArcraDeps
@@ -91,15 +93,22 @@ def _mock_policy_agent(rules: list[PolicyRule] | None = None) -> Any:
     return mock
 
 
+def _mock_synthesis_agent() -> Any:
+    return Agent(TestModel(), output_type=SynthesisEvaluation)
+
+
 def _make_deps(
     vagueness_agent: Any | None = None,
     policy_agent: Any | None = None,
+    synthesis_agent: Any | None = None,
 ) -> ArcraDeps:
     return ArcraDeps(
         db_path=":memory:",
         resources_path=_RESOURCES_PATH,
         vagueness_agent=vagueness_agent or _mock_vagueness_agent(),
         policy_extraction_agent=policy_agent or _mock_policy_agent(),
+        synthesis_agent=synthesis_agent or _mock_synthesis_agent(),
+        confidence_threshold=0.75,
     )
 
 
