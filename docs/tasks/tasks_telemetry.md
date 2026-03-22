@@ -1,9 +1,14 @@
 # Tasks: Backend API & Telemetry Implementation (FastAPI)
-
-- [ ] **Setup:** Initialize FastAPI application. Configure CORS to allow requests strictly from the Next.js frontend IP/Domain.
-- [ ] **Data Layer (Read Model):** Update `db.py` to include schema definitions for `arcra_ui_read_model` and `arcra_audit_events`.
-- [ ] **Graph Telemetry Hooks:** Modify the Pydantic Graph node implementations. At the end of every node execution, emit an event to insert a row into `arcra_audit_events` (e.g., "Notion policy queried").
-- [ ] **Slack Node Telemetry:** Specifically update the `CheckSlackNode` and the Webhook endpoint to write the exact message text and exact reply text to the `arcra_audit_events` table.
-- [ ] **Endpoint Implementation:**  Implement `GET /api/v1/transactions/active`. Query `arcra_ui_read_model` where status is in `('pending', 'processing', 'suspended')` ordered by `last_updated` DESC limit 10. 
-- [ ] **Endpoint Implementation:** Implement `GET /api/v1/transactions/processed`. Query where status is in `('resolved', 'escalated')` limit 10.
-- [ ] **Endpoint Implementation:** Implement `GET /api/v1/transactions/{id}/audit`. Return a composite Pydantic response containing the Read Model details and the array of associated `arcra_audit_events`.
+- [x] **Setup:** Initialize FastAPI application. Configure CORS to allow requests strictly from the Next.js frontend IP/Domain.
+- [x] **Data Layer (Read Model):** Update `db.py` to include schema definitions for `arcra_ui_read_model` and `arcra_audit_events`.
+- [x] **Graph Telemetry Hooks:** Implemented `TelemetryProcessor` in `core/logging.py`. Nodes emit `logger.info(..., is_telemetry=True)`; the processor intercepts the flag and dispatches `asyncio.create_task(insert_audit_event(...))` — graph nodes remain pure (PLAN_OVERRIDE #2 & #5).
+- [x] **Slack Node Telemetry:** `insert_audit_event()` accepts `slack_channel`, `slack_message_sent`, and `slack_reply_received` optional fields; Slack nodes and the webhook endpoint will populate these in Phase 3.
+- [x] **Endpoint Implementation:** `GET /api/v1/transactions/active` — queries `arcra_ui_read_model` where status in `('pending', 'processing', 'suspended')` ordered by `last_updated` DESC limit 10.
+- [x] **Endpoint Implementation:** `GET /api/v1/transactions/processed` — queries where status in `('resolved', 'escalated')` limit 10.
+- [x] **Endpoint Implementation:** `GET /api/v1/transactions/{id}/audit` — returns composite Pydantic response with read-model details and array of `arcra_audit_events`.
+- [x] **SSE Stream:** `GET /api/v1/stream` — `StreamingResponse` polling `arcra_ui_read_model` every second for `last_updated` changes; pushes JSON payload to `EventSource` client (PLAN_OVERRIDE #4).
+- [x] **Foundation:** `core/config.py` — pydantic-settings `BaseSettings` for all env vars (`DATABASE_URL`, `AWS_*`, `BEDROCK_MODEL_ID`, `CONFIDENCE_THRESHOLD`, `SLACK_SIGNING_SECRET`, `FRONTEND_ORIGIN`).
+- [x] **Foundation:** `core/db.py` — aiosqlite connection factory with `PRAGMA journal_mode=WAL` and `PRAGMA synchronous=NORMAL` enforced on every connection; full DDL for `arcra_checkpoints`, `arcra_interrupts`, `arcra_audit_events`, `arcra_ui_read_model` (PLAN_OVERRIDE #2).
+- [x] **Foundation:** `core/logging.py` — dual-stream structlog multiplexer configured; `TelemetryProcessor` strips `is_telemetry` flag before stdout, dispatches background DB insert.
+- [x] **Tests:** 12 pytest tests covering DB init, WAL mode, all CRUD helpers, checkpoint/interrupt round-trips, and all `TelemetryProcessor` behaviours — 12/12 passing, zero warnings.
+- [x] **Type Safety:** mypy --strict reports zero errors across all 5 Phase 1 source files.
