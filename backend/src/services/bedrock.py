@@ -7,7 +7,7 @@ from pydantic_ai import Agent
 from pydantic_ai.models.bedrock import BedrockConverseModel
 
 from src.core.config import Settings
-from src.graph.state import AnomalyVaguenessResult, PolicyRuleContainer
+from src.graph.state import AnomalyVaguenessResult, PolicyRuleContainer, SynthesisEvaluation
 
 logger = structlog.get_logger(__name__)
 
@@ -26,6 +26,8 @@ class ArcraDeps:
     resources_path: str
     vagueness_agent: Agent[None, AnomalyVaguenessResult]
     policy_extraction_agent: Agent[None, PolicyRuleContainer]
+    synthesis_agent: Agent[None, SynthesisEvaluation]
+    confidence_threshold: float = 0.75
 
 
 def build_vagueness_agent(settings: Settings) -> Agent[None, AnomalyVaguenessResult]:
@@ -73,6 +75,31 @@ def build_policy_extraction_agent(
     )
 
 
+def build_synthesis_agent(settings: Settings) -> Agent[None, SynthesisEvaluation]:
+    """Factory: returns a Bedrock-backed agent for final confidence assessment.
+
+    The agent synthesises the merged context (transaction + policy + evidence)
+    and returns a structured confidence score with reasoning.  It must NOT
+    re-evaluate monetary thresholds — those are handled by ArcraState computed
+    fields (PLAN_OVERRIDE #1).
+    """
+    model = BedrockConverseModel(model_name=settings.bedrock_model_id)
+    return Agent(
+        model,
+        output_type=SynthesisEvaluation,
+        system_prompt=(
+            "You are a senior financial compliance officer performing a final review. "
+            "You will receive a merged context containing a transaction description, "
+            "vagueness analysis, relevant policy rules, and evidence documents. "
+            "Your ONLY job is to assess the overall confidence that this transaction "
+            "complies with company policy and can be safely posted to the Xero ledger. "
+            "Return a confidence_score between 0.0 (no confidence) and 1.0 (full "
+            "confidence), a human-readable reasoning string, and a list of key_risks "
+            "identified. Do NOT perform arithmetic on amounts — that has already been done."
+        ),
+    )
+
+
 def build_deps_from_settings(settings: Settings, resources_path: str) -> ArcraDeps:
     """Build the full ArcraDeps injection container from application settings."""
     logger.info(
@@ -85,4 +112,6 @@ def build_deps_from_settings(settings: Settings, resources_path: str) -> ArcraDe
         resources_path=resources_path,
         vagueness_agent=build_vagueness_agent(settings),
         policy_extraction_agent=build_policy_extraction_agent(settings),
+        synthesis_agent=build_synthesis_agent(settings),
+        confidence_threshold=settings.confidence_threshold,
     )

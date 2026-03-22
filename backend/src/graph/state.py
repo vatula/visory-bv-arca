@@ -78,6 +78,34 @@ class AnomalyVaguenessResult(BaseModel):
     extracted_entities: dict[str, str] = Field(default_factory=dict)
 
 
+class SynthesisEvaluation(BaseModel):
+    """LLM output for the final confidence assessment.
+
+    Per PLAN_OVERRIDE #1, the model only provides a holistic text-based
+    confidence judgement — it never re-evaluates monetary thresholds.
+    """
+
+    confidence_score: float = Field(ge=0.0, le=1.0)
+    reasoning: str
+    key_risks: list[str] = Field(default_factory=list)
+
+
+class XeroDraft(BaseModel):
+    """Simulated Xero ledger draft payload produced by DraftGenerationNode."""
+
+    draft_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    transaction_id: str
+    merchant: str
+    amount: float
+    currency: str
+    category: str | None = None
+    policy_references: list[str] = Field(default_factory=list)
+    evidence_uris: list[str] = Field(default_factory=list)
+    confidence_score: float
+    reasoning: str
+    xero_status: str = "draft"
+
+
 class ArcraState(BaseModel):
     """Unified mutable state that flows through every ARCRA graph phase.
 
@@ -97,6 +125,10 @@ class ArcraState(BaseModel):
     validation_confidence: float = 0.0
     status: str = "pending"
     error_message: str | None = None
+    # Phase 4 — Synthesis
+    merged_context: str | None = None
+    synthesis_evaluation: SynthesisEvaluation | None = None
+    xero_draft: XeroDraft | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
