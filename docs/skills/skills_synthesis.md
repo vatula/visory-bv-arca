@@ -2,9 +2,9 @@
 
 ## Core Competencies Required
 
-### Advanced Prompt Engineering & Structured Extraction (AWS Bedrock)
- - **Skill:** Designing deterministic, instruction-bound prompts for anthropic.claude-3-sonnet-20240229-v1:0 via the Bedrock Converse API.  
- - **Application:** Forcing the LLM to process a highly complex, merged context window (transaction\_data \+ policy\_context \+ evidence\_documents) and output a strict, mathematically rigid JSON schema containing a confidence\_score (float) and reasoning (string).  
+### Advanced Prompt Engineering & Structured Extraction (Pydantic AI Bedrock)
+ - **Skill:** Designing deterministic, instruction-bound prompts for `amazon.nova-lite-v1:0` via `pydantic-ai`'s `BedrockModel`.  
+ - **Application:** Forcing the LLM via a Pydantic AI `Agent` to process a highly complex, merged context window (transaction\_data \+ policy\_context \+ evidence\_documents) and output a strict, mathematically rigid JSON schema (via `result_type`) containing a confidence\_score (float) and reasoning (string).  
  - **MLOps Focus:** Handling non-deterministic edge cases gracefully (e.g., what happens if the model refuses to score or outputs a malformed schema).
 
 ### Pydantic Graph Orchestration

@@ -43,4 +43,4 @@ A visually distinct timeline of graph node traversals.
 ### 3. Synthesis & Evaluation
 
  - **Confidence Score:** Displayed visually (e.g., progress bar or color-coded metric).
- - **Agent Reasoning:** The raw string output from the Bedrock evaluation detailing why it matched the receipt to the policy.
+ - **Agent Reasoning:** The raw string output from the Pydantic AI agent's evaluation detailing why it matched the receipt to the policy.
