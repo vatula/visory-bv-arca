@@ -98,7 +98,7 @@ backend/ipython_config.py
 #   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
 #   This is especially recommended for binary packages to ensure reproducibility, and is more
 #   commonly ignored for libraries.
-#uv.lock
+/backend/uv.lock
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
@@ -143,6 +143,16 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+/backend/.env
+/backend/.envrc
+/backend/.venv
+/backend/env/
+/backend/venv/
+/backend/ENV/
+/backend/env.bak/
+/backend/venv.bak/
+
 
 # Spyder project settings
 .spyderproject
@@ -209,3 +219,4 @@ __marimo__/
 /.env
 
 /frontend/node_modules/
+/frontend/.next/

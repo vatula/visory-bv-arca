@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import structlog
 from pydantic_ai import Agent
 from pydantic_ai.models.bedrock import BedrockConverseModel
+from pydantic_ai.settings import ModelSettings
 
 from src.core.config import Settings
 from src.graph.state import AnomalyVaguenessResult, PolicyRuleContainer, SynthesisEvaluation
@@ -36,7 +37,7 @@ def build_vagueness_agent(settings: Settings) -> Agent[None, AnomalyVaguenessRes
     The agent must NOT evaluate monetary thresholds — those are handled by
     ArcraState.requires_policy_check (PLAN_OVERRIDE #1).
     """
-    model = BedrockConverseModel(model_name=settings.bedrock_model_id)
+    model = BedrockConverseModel(model_name=settings.bedrock_model_id, settings=ModelSettings(temperature=0.0))
     return Agent(
         model,
         output_type=AnomalyVaguenessResult,
@@ -45,10 +46,19 @@ def build_vagueness_agent(settings: Settings) -> Agent[None, AnomalyVaguenessRes
             "Your ONLY job is to extract text entities from transaction descriptions. "
             "You must NOT perform any arithmetic or threshold evaluations — "
             "those are handled by deterministic Python code. "
-            "Return is_vague=true if critical identifying context is absent "
-            "(e.g. no project code for a cloud charge, no attendees for a meal "
-            "expense, no asset tag for hardware, no ATO reference for a tax payment). "
-            "Populate extracted_entities with any identifiers you find."
+            "Return is_vague=true if critical identifying context is ABSENT from the description. "
+            "IMPORTANT DEFINITIONS — read carefully before deciding:\n"
+            "  - A PROJECT CODE or COST CENTER is a distinct alphanumeric identifier "
+            "SEPARATE from the vendor name (examples: 'PROJ-123', 'CC-MKTG', 'P9042', "
+            "'INFRA-PROD'). The vendor name itself (e.g. 'GOOGLE CLOUD', 'AWS SERVICES', "
+            "'AZURE', 'DATADOG') is NOT a project code.\n"
+            "  - For cloud provider charges (AWS, GCP, Azure, Datadog, GitHub, etc.), "
+            "flag is_vague=true if the description contains ONLY the vendor name with no "
+            "separate project/cost-center code alongside it.\n"
+            "  - For meal/entertainment expenses, flag is_vague=true if no attendee names "
+            "or business purpose are present.\n"
+            "  - For hardware purchases, flag is_vague=true if no asset tag is present.\n"
+            "Populate extracted_entities with any real identifiers you find (NOT vendor names)."
         ),
     )
 
@@ -60,7 +70,7 @@ def build_policy_extraction_agent(
 
     The agent must NOT invent rules not present in the document (PLAN_OVERRIDE #1).
     """
-    model = BedrockConverseModel(model_name=settings.bedrock_model_id)
+    model = BedrockConverseModel(model_name=settings.bedrock_model_id, settings=ModelSettings(temperature=0.0))
     return Agent(
         model,
         output_type=PolicyRuleContainer,
@@ -83,7 +93,7 @@ def build_synthesis_agent(settings: Settings) -> Agent[None, SynthesisEvaluation
     re-evaluate monetary thresholds — those are handled by ArcraState computed
     fields (PLAN_OVERRIDE #1).
     """
-    model = BedrockConverseModel(model_name=settings.bedrock_model_id)
+    model = BedrockConverseModel(model_name=settings.bedrock_model_id, settings=ModelSettings(temperature=0.0))
     return Agent(
         model,
         output_type=SynthesisEvaluation,
