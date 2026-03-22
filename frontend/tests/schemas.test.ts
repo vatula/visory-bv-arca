@@ -5,6 +5,8 @@ import {
   TransactionAuditResponseSchema,
   ActiveTransactionsResponseSchema,
   ProcessedTransactionsResponseSchema,
+  QueuedTransactionSchema,
+  QueueResponseSchema,
   TransactionStatusSchema,
   getStatusMeta,
 } from "@/types/schemas";
@@ -143,6 +145,107 @@ describe("ProcessedTransactionsResponseSchema", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Queue schemas
+// ---------------------------------------------------------------------------
+
+const validQueuedTransaction = {
+  transaction_id: "tx_q_001",
+  date: "2026-01-15",
+  description: "AWS Cloud Services",
+  amount: -450.0,
+  currency: "AUD",
+  type: "DEBIT",
+  bank_account_id: "acc_001",
+};
+
+describe("QueuedTransactionSchema", () => {
+  it("parses a valid queued transaction", () => {
+    const result = QueuedTransactionSchema.parse(validQueuedTransaction);
+    expect(result.transaction_id).toBe("tx_q_001");
+    expect(result.amount).toBe(-450.0);
+  });
+
+  it("accepts null bank_account_id", () => {
+    const result = QueuedTransactionSchema.parse({
+      ...validQueuedTransaction,
+      bank_account_id: null,
+    });
+    expect(result.bank_account_id).toBeNull();
+  });
+
+  it("accepts missing bank_account_id (optional)", () => {
+    const { bank_account_id: _omit, ...rest } = validQueuedTransaction;
+    const result = QueuedTransactionSchema.parse(rest);
+    expect(result.bank_account_id).toBeUndefined();
+  });
+
+  it("rejects missing required fields", () => {
+    expect(() =>
+      QueuedTransactionSchema.parse({ transaction_id: "tx_q_001" }),
+    ).toThrow();
+  });
+
+  it("rejects non-string transaction_id", () => {
+    expect(() =>
+      QueuedTransactionSchema.parse({ ...validQueuedTransaction, transaction_id: 123 }),
+    ).toThrow();
+  });
+
+  it("rejects non-number amount", () => {
+    expect(() =>
+      QueuedTransactionSchema.parse({ ...validQueuedTransaction, amount: "not-a-number" }),
+    ).toThrow();
+  });
+});
+
+describe("QueueResponseSchema", () => {
+  it("parses a valid queue response", () => {
+    const result = QueueResponseSchema.parse({
+      queue: [validQueuedTransaction],
+      total_remaining: 52,
+    });
+    expect(result.queue).toHaveLength(1);
+    expect(result.total_remaining).toBe(52);
+  });
+
+  it("accepts an empty queue", () => {
+    const result = QueueResponseSchema.parse({ queue: [], total_remaining: 0 });
+    expect(result.queue).toHaveLength(0);
+    expect(result.total_remaining).toBe(0);
+  });
+
+  it("rejects missing total_remaining", () => {
+    expect(() =>
+      QueueResponseSchema.parse({ queue: [] }),
+    ).toThrow();
+  });
+
+  it("rejects invalid item inside queue array", () => {
+    expect(() =>
+      QueueResponseSchema.parse({ queue: [{ bad: "data" }], total_remaining: 1 }),
+    ).toThrow();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Extended status enum — new values added for backend alignment
+// ---------------------------------------------------------------------------
+
+describe("TransactionStatusSchema — extended values", () => {
+  it("accepts 'suspended'", () => {
+    expect(TransactionStatusSchema.parse("suspended")).toBe("suspended");
+  });
+
+  it("accepts 'evidence_found'", () => {
+    expect(TransactionStatusSchema.parse("evidence_found")).toBe("evidence_found");
+  });
+
+  it("accepts 'resolved'", () => {
+    expect(TransactionStatusSchema.parse("resolved")).toBe("resolved");
+  });
+});
+
 describe("getStatusMeta", () => {
   it("returns correct label for every status", () => {
     expect(getStatusMeta("pending").label).toBe("Pending");
@@ -152,6 +255,9 @@ describe("getStatusMeta", () => {
     expect(getStatusMeta("awaiting_slack").label).toBe("Awaiting Slack");
     expect(getStatusMeta("complete").label).toBe("Complete");
     expect(getStatusMeta("escalated").label).toBe("Escalated");
+    expect(getStatusMeta("suspended").label).toBe("Suspended");
+    expect(getStatusMeta("evidence_found").label).toBe("Evidence Found");
+    expect(getStatusMeta("resolved").label).toBe("Resolved");
   });
 
   it("returns distinct colours per status", () => {

@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import faviconPng from "../../assets/img/favicon.png";
 
 export const metadata: Metadata = {
   title: "ARCRA — Agentic Observability Console",
   description: "Real-time visibility into the ARCRA autonomous reconciliation agent.",
+  icons: {
+    icon: faviconPng.src,
+  },
 };
 
 interface RootLayoutProps {

@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     # Synthesis
     confidence_threshold: float = Field(default=0.75, ge=0.0, le=1.0, description="Minimum confidence score before escalation")
 
+    # Resources
+    resources_path: str = Field(default="resources", description="Absolute path to the mounted resources directory (set via RESOURCES_PATH env var)")
     # API
     frontend_origin: str = Field(default="http://localhost:3000", description="Allowed CORS origin for the Next.js frontend")
     log_level: str = Field(default="INFO", description="Structlog minimum log level")

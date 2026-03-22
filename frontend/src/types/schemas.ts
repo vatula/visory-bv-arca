@@ -75,6 +75,29 @@ export type ProcessedTransactionsResponse = z.infer<
 >;
 
 // ---------------------------------------------------------------------------
+// Queue schemas
+// ---------------------------------------------------------------------------
+
+export const QueuedTransactionSchema = z.object({
+  transaction_id: z.string(),
+  date: z.string(),
+  description: z.string(),
+  amount: z.number(),
+  currency: z.string(),
+  type: z.string(),
+  bank_account_id: z.string().nullable().optional(),
+});
+
+export type QueuedTransaction = z.infer<typeof QueuedTransactionSchema>;
+
+export const QueueResponseSchema = z.object({
+  queue: z.array(QueuedTransactionSchema),
+  total_remaining: z.number(),
+});
+
+export type QueueResponse = z.infer<typeof QueueResponseSchema>;
+
+// ---------------------------------------------------------------------------
 // SSE event payload
 // ---------------------------------------------------------------------------
 
@@ -96,6 +119,8 @@ export type DashboardState =
       readonly kind: "ready";
       readonly active: readonly TransactionSummary[];
       readonly processed: readonly TransactionSummary[];
+      readonly queue: readonly QueuedTransaction[];
+      readonly totalRemaining: number;
     };
 
 // ---------------------------------------------------------------------------

@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes.process import router as process_router
+from src.api.routes.queue import router as queue_router
+from src.api.routes.reset import router as reset_router
 from src.api.routes.slack import router as slack_router
 from src.api.routes.transactions import router as transactions_router
 from src.core.config import get_settings
@@ -40,7 +42,9 @@ def create_app() -> FastAPI:
     )
     app.include_router(transactions_router, prefix="/api/v1")
     app.include_router(process_router, prefix="/api/v1")
+    app.include_router(queue_router, prefix="/api/v1")
     app.include_router(slack_router, prefix="/api/v1")
+    app.include_router(reset_router, prefix="/api/v1")
     return app
 
 
