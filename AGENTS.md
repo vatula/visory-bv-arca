@@ -1,14 +1,12 @@
-# AGENTS.md
+# Coding rules
 
-## Coding rules
-
-### Generic Architecture & Systems Thinking
+## Generic Architecture & Systems Thinking
 - Isolate pure logic from side effects. Core transformations must be pure functions to ensure deterministic testing.
 - Never swallow exceptions silently. Always log the error with context or re-raise a custom domain-specific exception.
 - Use dependency injection for external services (APIs, databases, LLMs) to allow for reliable mocking during testing.
 - Write tests that verify system behavior and edge cases, not just line coverage. 
 
-### Python
+## Python
 - Ensure all imports are at the top of the file. NEVER import modules within functions.
 - Always use `f-strings` for string formatting. Do not use `str.format`.
 - Always inherit from `pydantic` `BaseModel` for data models except for (Hierarchical) Finite State Machine (FSM) models. Do not use `dataclasses`.
@@ -25,7 +23,7 @@
 - Always use `pytest-asyncio` for async testing. Do not use `asyncio`.
 - Always use `fastapi` for API development. Do not use `flask`.
 
-#### Observability & Logging (Python)
+### Observability & Logging (Python)
 - **Absolute Ban on `print()`:** Never use `print()`, `sys.stdout.write`, or `sys.stderr.write`. 
 - **Mandate Structured Logging:** Always use the project's configured structured logger (`structlog` package). Logs must be emitted as JSON, not concatenated strings.
 - **Context Binding:** Do not embed variables into log messages. Bind them as contextual kwargs (e.g., `logger.info("fsm_transition", from_state=state_a, to_state=state_b)`).
@@ -35,7 +33,7 @@
 - **Strict Logging Levels (ERROR/EXCEPTION):** Use only for unrecoverable failures that halt the current unit of work. You must include the full stack trace (`exc_info=True`) and the state of the inputs at the time of failure.
 
 
-### TypeScript
+## TypeScript
 - Enable and adhere strictly to `tsconfig` `"strict": true`.
 - Use `unknown` instead of `any` when a type is not yet known. Force type narrowing before usage.
 - Always use `zod` for runtime data validation at system boundaries (e.g., API responses, inputs).
@@ -45,7 +43,7 @@
 - Use `vitest` for testing. 
 - Avoid `class`-based inheritance for data models; prefer functional composition and interfaces.
 
-#### Observability & Logging (TypeScript)
+### Observability & Logging (TypeScript)
 
 - **Absolute Ban on `console` API:** Never use `console.log`, `console.info`, `console.warn`, or `console.error` anywhere in the codebase.
 - **Mandate Universal `pino`:** Always use `pino` for logging across both Node.js (server) and browser (client) environments to maintain structural parity.
@@ -59,10 +57,70 @@
 - **Strict Logging Levels (warn):** Use for recoverable anomalies. Examples: API timeouts triggering a retry mechanism, rendering fallbacks, or encountering unexpected but non-fatal data structures.
 - **Strict Logging Levels (error/fatal):** Use strictly for unrecoverable state failures, uncaught boundary exceptions, or crashes. You must pass the native `Error` object to `pino` so it can serialize the stack trace: `logger.error({ err: errorObject }, "Description")`.
 
-## Setup commands
-* `uv sync`
-* `uv run pytest`
 
-## Workspace mapping
-* `/src/orchestrator`: Pydantic AI HFSM (Hierarchical Finate State Machine) logic, state definitions, and GraphRunContext.
-* `/src/mcp_mesh`: Python-based MCP servers (Xero, Slack, Notion mocks).
+# ARCRA Agent Execution Protocol & Skill Mapping
+
+## Directives for the AI Coding Agent
+
+As the AI assisting in the implementation of the ARCRA prototype, you must adhere strictly to this protocol. This project relies on a highly decoupled architecture utilizing Pydantic Graphs, SQLite natively for state checkpointing, dual-stream structlog multiplexing, and a strict API boundary between the Python Backend and Next.js Frontend.
+
+### **Your Operational Rules:**
+
+1. **Context Window Strictness:** Before implementing any task, you must read its strictly bound `PLAN_*.md` document. Do not hallucinate architecture or database schemas.
+2. **Task Tracking:** After completing a task, you must update the corresponding `docs/tasks/tasks_*.md` file, changing `[ ]` to `[x]`. If you discover missing intermediate steps during implementation, you must add them to the task list.
+3. **Purity of the Graph:** Python execution nodes must remain mathematically pure. They do not execute database inserts for logging; they only emit state updates and `structlog` telemetry (`is_telemetry=True`).
+4. **Data Grounding (No Mock Classes):** Do not write dummy python dictionaries for testing. You must use the files provided in the `resources/` directory (e.g., `xero_api_feed.json`, local policies) to hydrate your local graph tests.
+5. **Strict Phase Gating:** **DO NOT** attempt to implement multiple phases at once. You must complete a phase, update its task list, output the code, and explicitly wait for the human to type "Proceed to Phase X" before continuing.
+
+## Execution Order & Plan-to-Task Bindings
+
+Implementation must proceed in the following ordered phases.
+
+### Phase 1: Foundation & Observability Pipeline
+
+Before the graph can run, the telemetry and state checkpointer must exist.
+
+ - **Bound Plan:** `docs/plan/PLAN_telemetry.md`
+ - **Bound Tasks:** `docs/tasks/tasks_telemetry.md`
+ - **Required Skills Profile:** `docs/skills/skills_telemetry.md`
+ - **Focus:** Implement the dual-stream multiplexer. Ensure the SQLite schema is initialized for both native graph checkpointing (`arcra_checkpoints`) and the UI Read Model (`arcra_ui_read_model`).
+
+### Phase 2: Ingestion & Policy Extraction
+
+The initial automated pathway.
+
+ - **Bound Plans:** `docs/plan/PLAN_anomaly.md`, `docs/plan/PLAN_policy.md`
+ - **Bound Tasks:** `docs/tasks/tasks_anomaly.md`, `docs/tasks/tasks_policy.md`
+ - **Required Skills Profile:** `docs/skills/skills_anomaly.md`, `docs/skills/skills_policy.md`
+ - **Focus & Resources:** Build the initial DAG nodes and hydrate the `ArcraState`. For local testing, ingest `resources/xero_api_feed.json`. For the Notion MCP simulation, read directly from `resources/policies/*.md`.
+
+### Phase 3: Stateful Interruption (High Complexity)
+
+The core scientific differentiator of ARCRA.
+
+ - **Bound Plans:** `docs/plan/PLAN_gathering.md`
+ - **Bound Tasks:** `docs/tasks/tasks_gathering.md`
+ - **Required Skills Profile:** `docs/skills/skills_gathering.md`
+ - **Focus & Resources:** Implement the native graph `interrupt()` when Slack is queried. Build the FastAPI endpoint `/webhook/slack` that catches the payload and resumes the graph via `thread_id`. For the Drive simulation, search against `resources/invoices/*.pdf` and `*.md`.
+
+### Phase 4: Synthesis & Xero Draft
+
+The final reasoning and output stage.
+
+ - **Bound Plans:** `docs/plan/PLAN_synthesis.md`
+ - **Bound Tasks:** `docs/tasks/tasks_synthesis.md`
+ - **Required Skills Profile:** `docs/skills/skills_synthesis.md`
+ - **Focus & Resources:** Merge the state context, evaluate the confidence score using Bedrock, and prepare the final ledger draft payload.
+
+### Phase 5: The Agentic Observability Console
+
+The decoupled frontend interface.
+
+ - **Bound Plans:** `docs/plan/PLAN_frontend.md`
+ - **Bound Tasks:** `docs/tasks/tasks_frontend.md`
+ - **Required Skills Profile:** `docs/skills/skills_frontend.md`
+ - **Focus & Resources:** Consume the FastAPI OpenAPI spec. Build the UI that reads from the `arcra_ui_read_model` and `arcra_audit_events` to visually display the agent's reasoning trace and interrupted states.
+
+## Telemetry Implementation Note
+
+When executing Phase 1 (Telemetry), refer strictly to the structlog multiplexer defined in the plan. Graph nodes must utilize: `logger.info("event", is_telemetry=True, ...)`. The interceptor must catch this flag, write to the SQLite `arcra_audit_events` table, and strip the flag before passing the event to `stdout`.
